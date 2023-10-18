@@ -57,7 +57,7 @@ func main() {
 	//- Products must include the price and the name
 	//* Insert 3 products into the array
 	shopList := [...]Items{
-		{name: "Cpu", price: 3250.00},
+		{name: "Cpu", price: 3150.00},
 		{name: "Monitor", price: 1149.90},
 		{name: "Motor Desk", price: 2109.49},
 		{},
