@@ -11,7 +11,7 @@
 //  as the value
 //* Set all of the server statuses to `Online` when creating the map
 //* After creating the map, perform the following actions:
-//  - call display server info function
+//  - call display server info function-
 //  - change server status of `darkstar` to `Retired`
 //  - change server status of `aiur` to `Offline`
 //  - call display server info function
