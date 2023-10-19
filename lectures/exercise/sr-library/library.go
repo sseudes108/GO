@@ -32,6 +32,7 @@ função de entrega (livro + membro) (horario de emprestimo)
 função de verificar o status de todos os livros
 */
 
+// Membros
 const (
 	membroPadrao = 0
 	alessandra   = 1
@@ -39,56 +40,78 @@ const (
 	danny        = 3
 )
 
+// Livros
+const (
+	guia1   = 0
+	ecce    = 1
+	fredo   = 2
+	candido = 3
+)
+
 type Book struct {
+	index             int
 	nome              string
 	emprestado        bool
 	emprestadoPorQuem Member
-	retiradoQuando    time.Time
+	emprestadoQuando  time.Time
 }
 
 type Member struct {
-	nome              string
-	livrosEmprestados int
+	nome        string
+	quantLivros int
+	livros      []Book
 }
 
-func statusDosLivrosNaLib(books []*Book, clients []*Member) {
+func checarLib(books []*Book, clients []*Member) {
 	fmt.Println("Status da lib")
 	fmt.Println("---")
 	for _, book := range books {
 		if !book.emprestado {
-			fmt.Println("Nome:", book.nome, "/ Emprestado? Sim")
-		} else {
 			fmt.Println("Nome:", book.nome, "/ Emprestado? Não")
+		} else {
+			fmt.Println("Nome:", book.nome, "/ Emprestado? Sim")
 		}
 	}
 
 	fmt.Println("---")
-	fmt.Println("Membros com livros emprestados")
+	//fmt.Println("Membros com livros emprestados")
 	for _, client := range clients {
-		if client.livrosEmprestados > 0 {
-			fmt.Println(client.nome, "/ Livros emprestados", client.livrosEmprestados)
+		if client.quantLivros > 0 {
+			//fmt.Println(client.nome, "/ Livros emprestados", client.quantLivros)
+			checarClients(client)
 		}
 	}
+	//fmt.Println("---")
+}
 
+func checarClients(client *Member) {
+	fmt.Println("Livros em posse de", client.nome, ":")
+	for _, book := range client.livros {
+		fmt.Println(book.nome, ", desde", book.emprestadoQuando.Format("2006-01-02 15:04"))
+	}
 	fmt.Println("---")
 }
 
 func emprestarLivro(book *Book, client *Member) {
+	fmt.Println("Emprestando livro...")
 	book.emprestado = true
 	book.emprestadoPorQuem = *client
-	book.retiradoQuando = time.Now()
-	formattedTime := book.retiradoQuando.Format("2006-01-02 15:04")
-	client.livrosEmprestados++
+	book.emprestadoQuando = time.Now()
+	formattedTime := book.emprestadoQuando.Format("2006-01-02 15:04")
+	client.quantLivros++
+	client.livros = append(client.livros, *book)
 	fmt.Println("Livro:", book.nome, "Emprestado para", client.nome, "em:", formattedTime)
 
 	fmt.Println("---")
 }
 
 func devolverLivro(book *Book, client *Member, membros []*Member) {
-
+	fmt.Println("Devolvendo livro...")
 	fmt.Println("Livro:", book.nome, "Devolvido por", client.nome, "em:", time.Now().Format("2006-01-02 15:04"))
 
 	book.emprestado = false
+	client.quantLivros--
+	client.quantLivros[book.index]
 	client = membros[membroPadrao]
 	book.emprestadoPorQuem = *client
 
@@ -98,30 +121,38 @@ func devolverLivro(book *Book, client *Member, membros []*Member) {
 func main() {
 
 	//Livros
+
 	books := []*Book{
-		{nome: "O guia do mochileiro das galaxias"},
-		{nome: "Ecce Homo"},
-		{nome: "Fredo"},
-		{nome: "Cândido"},
+		{nome: "O guia do mochileiro das galaxias", index: guia1},
+		{nome: "Ecce Homo", index: ecce},
+		{nome: "Fredo", index: fredo},
+		{nome: "Cândido", index: candido},
 	}
 
 	membros := []*Member{
 		{nome: "membroPadrao"},
-		{nome: "Alessandra Ribeiro", livrosEmprestados: 0},
-		{nome: "Bianca Hills", livrosEmprestados: 0},
-		{nome: "Danny Bendochy", livrosEmprestados: 0},
+		{nome: "Alessandra Ribeiro"},
+		{nome: "Bianca Hills"},
+		{nome: "Danny Bendochy"},
 	}
 
-	statusDosLivrosNaLib(books, membros)
+	checarLib(books, membros)
 
-	emprestarLivro(books[0], membros[alessandra])
+	emprestarLivro(books[guia1], membros[alessandra])
 
-	statusDosLivrosNaLib(books, membros)
+	checarLib(books, membros)
 
-	devolverLivro(books[0], membros[alessandra], membros)
+	devolverLivro(books[guia1], membros[alessandra], membros)
 
-	emprestarLivro(books[2], membros[danny])
-	emprestarLivro(books[3], membros[bianca])
+	checarLib(books, membros)
 
-	statusDosLivrosNaLib(books, membros)
+	emprestarLivro(books[ecce], membros[danny])
+	emprestarLivro(books[fredo], membros[danny])
+	emprestarLivro(books[candido], membros[bianca])
+
+	checarLib(books, membros)
+
+	devolverLivro(books[ecce], membros[danny], membros)
+
+	checarLib(books, membros)
 }
