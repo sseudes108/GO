@@ -24,136 +24,148 @@ import (
 	"time"
 )
 
-type Title string
-type Name string
+type Titulo string
+type Nome string
 
-type LendAudit struct {
-	checkOut time.Time
-	checkIn  time.Time
+// Registro dos horarios de retirada e devolução
+type Emprestimo struct {
+	retirada  time.Time
+	devolucao time.Time
 }
 
-type Member struct {
-	name  Name
-	books map[Title]LendAudit
+type Membro struct {
+	nome   Nome
+	livros map[Titulo]Emprestimo
 }
 
-type BookEntry struct {
-	total  int
-	lended int
+// Registro de quantidades do Livro em questão
+type LivroReg struct {
+	total       int
+	emprestados int
 }
 
-type library struct {
-	members map[Name]Member
-	books   map[Title]BookEntry
+type Biblioteca struct {
+	membros map[Nome]Membro
+	livros  map[Titulo]LivroReg
 }
 
-func printMemberAudit(member *Member) {
-	for title, audit := range member.books {
-		var returnTime string
-		if audit.checkIn.IsZero() {
-			returnTime = "[Not returned yet]"
+func verificarEmprestimos(membro *Membro) {
+	for titulo, emprestimo := range membro.livros {
+		var retornoTempo string
+		if emprestimo.devolucao.IsZero() {
+			retornoTempo = "[Ainda não devolvido]"
 		} else {
-			returnTime = audit.checkIn.String()
+			retornoTempo = emprestimo.devolucao.String()
 		}
-		fmt.Println(member.name, ":", title, ":", audit.checkOut.String(), "through", returnTime)
-		//fmt.Println("1")
+		fmt.Println(membro.nome, ":", titulo, ":", emprestimo.retirada.String(), "até????", retornoTempo)
 	}
 }
 
-func printMembersAudit(library *library) {
-	for _, member := range library.members {
-		printMemberAudit(&member)
-		//fmt.Println("0")
+func checarMembros(bib *Biblioteca) {
+	for _, membro := range bib.membros {
+		verificarEmprestimos(&membro)
 	}
 }
 
-func printLibraryBooks(library *library) {
+func checarBiblioteca(bib *Biblioteca) {
 	fmt.Println()
-	for title, book := range library.books {
-		fmt.Println(title, "/ total:", book.total, "/ Lended", book.lended)
+	for titulo, livro := range bib.livros {
+		fmt.Println(titulo, "/ Total:", livro.total, "/ Emprestados:", livro.emprestados,
+			"/ Disponiveis:", livro.total-livro.emprestados)
 	}
 }
 
-func checkOutBook(library *library, title Title, member *Member) bool {
-	book, found := library.books[title]
-	if !found {
-		fmt.Println("Book no part of library")
+func emprestarLivro(bib *Biblioteca, titulo Titulo, membro *Membro) bool {
+	fmt.Println("\n", titulo)
+	livro, encontrado := bib.livros[titulo]
+	if !encontrado {
+		fmt.Println("Livro não faz parte da biblioteca")
 		return false
 	}
-	if book.lended == book.total {
-		fmt.Println("No more books to lend")
+	if livro.emprestados >= livro.total {
+		livro.emprestados = livro.total
+		fmt.Println("Não há mais desse livro disponivel na biblioteca")
 		return false
 	}
+	livro.emprestados++
+	bib.livros[titulo] = livro
+	membro.livros[titulo] = Emprestimo{retirada: time.Now()}
 
-	book.lended++
-	library.books[title] = book
-	member.books[title] = LendAudit{checkOut: time.Now()}
-
-	fmt.Println("Checked out", title, "to", member.name)
+	fmt.Println("Livro retirado com sucesso, por", membro.nome)
 	return true
 }
 
-func returnBook(library *library, title Title, member *Member) bool {
-	book, found := library.books[title]
-	if !found {
-		fmt.Println("Book no part of library")
-		return false
-	}
-	audit, found := member.books[title]
-	if !found {
-		fmt.Println("Member did not check out this book")
+func devolverLivro(bib *Biblioteca, titulo Titulo, membro *Membro) bool {
+	fmt.Println("\n", titulo)
+	livro, encontrado := bib.livros[titulo]
+	if !encontrado {
+		fmt.Println("Livro não faz parte da biblioteca")
 		return false
 	}
 
-	book.lended--
-	library.books[title] = book
+	emprestimo, encontrado := membro.livros[titulo]
+	if !encontrado {
+		fmt.Println(membro.nome, "não retirou este livro")
+		return false
+	}
 
-	audit.checkIn = time.Now()
-	member.books[title] = audit
+	livro.emprestados--
+	bib.livros[titulo] = livro
 
+	emprestimo.devolucao = time.Now()
+	membro.livros[titulo] = emprestimo
+
+	fmt.Println("Livro devolvido por", membro.nome)
 	return true
 }
 
 func main() {
 
-	library := library{
-		books:   make(map[Title]BookEntry),
-		members: make(map[Name]Member),
-	}
+	////// 	BIBILIOTECA //////
 
-	library.books["O guia do Mochileiro das Galaxias"] = BookEntry{
-		total:  2,
-		lended: 0,
+	bib := Biblioteca{
+		livros:  make(map[Titulo]LivroReg),
+		membros: make(map[Nome]Membro),
 	}
-	library.books["Ecce Homo"] = BookEntry{
-		total:  1,
-		lended: 0,
+	////// LIVROS //////
+	bib.livros["Ecce Homo"] = LivroReg{
+		total:       2,
+		emprestados: 0,
 	}
-	library.books["Candido"] = BookEntry{
-		total:  1,
-		lended: 0,
+	bib.livros["Zaratustra"] = LivroReg{
+		total:       2,
+		emprestados: 0,
 	}
-	library.books["Fredo"] = BookEntry{
-		total:  1,
-		lended: 0,
+	bib.livros["Gaia Ciencia"] = LivroReg{
+		total:       1,
+		emprestados: 0,
 	}
+	bib.livros["Anticristo"] = LivroReg{
+		total:       3,
+		emprestados: 0,
+	}
+	////// MEMBROS //////
+	bib.membros["Eudes"] = Membro{"Eudes", make(map[Titulo]Emprestimo)}
+	bib.membros["Alessandra"] = Membro{"Alessandra", make(map[Titulo]Emprestimo)}
+	bib.membros["Bruna"] = Membro{"Bruna", make(map[Titulo]Emprestimo)}
 
-	library.members["Alessandra"] = Member{"Alessandra Ribeiro", make(map[Title]LendAudit)}
-	library.members["Danny"] = Member{"Danny Bendochy", make(map[Title]LendAudit)}
-	library.members["Juliana Souza"] = Member{"Juliana Souza", make(map[Title]LendAudit)}
+	fmt.Println("INICIAIS")
+	checarBiblioteca(&bib)
+	checarMembros(&bib)
 
-	fmt.Println("Initials")
-	printLibraryBooks(&library)
-	printMembersAudit(&library)
+	alessandra := bib.membros["Alessandra"]
+	emprestarLivro(&bib, "Zaratustra", &alessandra)
+	emprestarLivro(&bib, "Anticristo", &alessandra)
 
-	member := library.members["Alessandra"]
-	fmt.Println("Checkout a book")
-	checkOutBook := checkOutBook(&library, "Ecce Homo", &member)
-	if checkOutBook {
-		printLibraryBooks(&library)
-		printMembersAudit(&library)
-	} else {
-		fmt.Println("Error")
-	}
+	bruna := bib.membros["Bruna"]
+	emprestarLivro(&bib, "Zaratustra", &bruna)
+	emprestarLivro(&bib, "Zaratustra", &bruna)
 
+	devolverLivro(&bib, "Zaratustra", &bruna)
+	devolverLivro(&bib, "Zaratustra", &alessandra)
+	devolverLivro(&bib, "Anticristo", &alessandra)
+
+	fmt.Println("FINAIS")
+	checarMembros(&bib)
+	checarBiblioteca(&bib)
 }
