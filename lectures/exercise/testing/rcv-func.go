@@ -12,8 +12,7 @@
 //  - Print out the statistic change within each function
 //  - Execute each function at least once
 
-// package main
-package rcvfunc
+package main
 
 import "fmt"
 
@@ -34,46 +33,46 @@ func (player *Player) DamagePlayer(amount int) {
 
 	player.currentHealth -= amount
 
-	if player.currentHealth <= 0 {
+	/*if player.currentHealth <= 0 {
 		player.currentHealth = 0
 		fmt.Println(player.name, "DEAD!")
 		player.displayInfo()
 		return
-	}
+	}*/
 	player.displayInfo()
 }
 
-func (player *Player) healPlayer(amount int) {
+func (player *Player) HealPlayer(amount int) {
 	fmt.Println("Healing player", amount)
 	player.currentHealth += amount
 
-	if player.currentHealth > player.maxHealth {
+	/*if player.currentHealth > player.maxHealth {
 		player.currentHealth = player.maxHealth
-	}
+	}*/
 
 	player.displayInfo()
 }
 
-func (player *Player) spendEnergyPlayer(amount int) {
+func (player *Player) SpendEnergyPlayer(amount int) {
 	fmt.Println("Spending Energy", amount)
 
-	if amount > player.currentEnergy {
+	/*if amount > player.currentEnergy {
 		fmt.Println("No energy to do that!")
 		player.displayInfo()
 		return
-	}
+	}*/
 
 	player.currentEnergy -= amount
 	player.displayInfo()
 }
 
-func (player *Player) restoreEnergyPlayer(amount int) {
+func (player *Player) RestoreEnergyPlayer(amount int) {
 	fmt.Println("Restoring Energy", amount)
 	player.currentEnergy += amount
 
-	if player.currentEnergy > player.maxEnergy {
+	/*if player.currentEnergy > player.maxEnergy {
 		player.currentEnergy = player.maxEnergy
-	}
+	}*/
 
 	player.displayInfo()
 }
@@ -104,15 +103,15 @@ func main() {
 	player.displayInfo()
 	fmt.Println("")
 
-	player.damagePlayer(10)
-	player.spendEnergyPlayer(99)
+	player.DamagePlayer(10)
+	player.SpendEnergyPlayer(99)
 
-	player.healPlayer(8)
-	player.spendEnergyPlayer(10)
+	player.HealPlayer(8)
+	player.SpendEnergyPlayer(10)
 
-	player.restoreEnergyPlayer(8)
+	player.RestoreEnergyPlayer(8)
 
-	player.damagePlayer(99)
+	player.DamagePlayer(99)
 
 	fmt.Println("")
 	player.displayInfo()
