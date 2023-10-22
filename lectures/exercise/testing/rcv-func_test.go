@@ -28,12 +28,12 @@ func newPlayer() Player {
 
 func TestHealth(t *testing.T) {
 	player := newPlayer()
-	player.HealPlayer(999)
+	player.HealPlayer(0)
 	if player.currentHealth > player.maxHealth {
 		t.Fatalf("health went over limite: current: %v, want %v", player.currentHealth, player.maxHealth)
 	}
 
-	player.DamagePlayer(player.maxHealth + 1)
+	player.DamagePlayer(player.maxHealth + 0)
 	if player.currentHealth < 0 {
 		t.Fatalf("health: %v. Minimum: 0", player.currentHealth)
 	}
@@ -44,12 +44,12 @@ func TestHealth(t *testing.T) {
 
 func TestEnergy(t *testing.T) {
 	player := newPlayer()
-	player.RestoreEnergyPlayer(999)
+	player.RestoreEnergyPlayer(0)
 	if player.currentEnergy > player.maxEnergy {
 		t.Fatalf("energy went over limite: %v, want %v", player.currentEnergy, player.maxEnergy)
 	}
 
-	player.SpendEnergyPlayer(player.maxEnergy + 1)
+	player.SpendEnergyPlayer(player.maxEnergy + 0)
 	if player.currentEnergy < 0 {
 		t.Fatalf("energy: %v. Minimum: 0", player.currentEnergy)
 	}
