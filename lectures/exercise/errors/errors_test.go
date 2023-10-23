@@ -9,7 +9,7 @@ func TestParseTime(t *testing.T) {
 		time string
 		ok   bool
 	}{
-		{"14:99:12", true},
+		{"19:00:12", true},
 		{"1:3:44", true},
 		{"bad", false},
 		{"1>-3:44", true},
