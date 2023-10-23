@@ -53,13 +53,8 @@ func checkAcess(user Member, day Day) {
 }
 
 func main() {
-	checkAcess(admin, friday)
-	checkAcess(manager, friday)
+	checkAcess(contractor, tuesday)
+	checkAcess(member, tuesday)
 
-	checkAcess(contractor, sunday) //denied
-
-	checkAcess(member, saturday)  //denied
-	checkAcess(member, wednesday) //granted
-
-	checkAcess(guest, thursday) //denied
+	checkAcess(contractor, saturday)
 }
