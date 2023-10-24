@@ -36,7 +36,6 @@ func showServersStatus(servers map[Server]int) {
 	stats := ""
 	onlines, offlines, uMaintence, retireds := 0, 0, 0, 0
 	for server, status := range servers {
-
 		switch status {
 		case online:
 			stats = "Online"
