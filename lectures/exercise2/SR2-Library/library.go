@@ -46,15 +46,43 @@ type Biblioteca struct {
 	membros map[Nome]Membro
 }
 
-func (lib *Biblioteca) emprestarLivro(titulo Titulo, membro *Membro) bool {
-
+func (lib *Biblioteca) devolverLivro(titulo Titulo, membro *Membro) bool {
+	fmt.Println("Devolvendo livro...")
 	livro, encontrado := lib.livros[titulo]
 	if !encontrado {
-		fmt.Println("Livro não faz parte da biblioteca")
+		fmt.Println(titulo, " - Livro não faz parte da biblioteca")
+		return false
+	}
+
+	emprestimo, encontrado := membro.livros[titulo]
+	if !encontrado {
+		fmt.Println(membro.nome, "não retirou este livro")
+		return false
+	}
+	livro.alugados--
+	lib.livros[titulo] = livro
+
+	emprestimo.devolucao = time.Now()
+	membro.livros[titulo] = emprestimo
+
+	momentoEntrega := emprestimo.devolucao
+	horaFormatada := momentoEntrega.Format("2006-01-02 15:04")
+	horaFormatadaComoTime, _ := time.Parse("2006-01-02 15:04", horaFormatada)
+
+	delete(membro.livros, titulo)
+	fmt.Println(titulo, "devolvido com sucesso por", membro.nome, "em", horaFormatadaComoTime)
+	return true
+}
+
+func (lib *Biblioteca) emprestarLivro(titulo Titulo, membro *Membro) bool {
+	fmt.Println("Emprestando livro...")
+	livro, encontrado := lib.livros[titulo]
+	if !encontrado {
+		fmt.Println(titulo, " - Livro não faz parte da biblioteca")
 		return false
 	}
 	if livro.alugados >= livro.quantidade {
-		fmt.Println("Não há mais desse livro disponivel")
+		fmt.Println(titulo, " - Não há mais desse livro disponivel")
 		return false
 	}
 	livro.alugados++
@@ -65,15 +93,18 @@ func (lib *Biblioteca) emprestarLivro(titulo Titulo, membro *Membro) bool {
 	horaFormatadaComoTime, _ := time.Parse("2006-01-02 15:04", horaFormatada)
 	membro.livros[titulo] = RegistroTempo{retirada: horaFormatadaComoTime}
 
+	fmt.Println(titulo, "emprestado com sucesso para", membro.nome, "em", horaFormatadaComoTime)
 	return true
 }
 
 func (lib *Biblioteca) infoBiblioteca() {
+	fmt.Println("Na Estante:")
 	lib.infoLivros()
+	fmt.Println("Membros com livros emprestados:")
 	lib.infoMembros()
 }
+
 func (lib *Biblioteca) verificarEmprestimos(membro *Membro) {
-	fmt.Println("Emprestimos")
 	for titulo, livro := range membro.livros {
 		fmt.Println("Membro:", membro.nome, ",", titulo, ",", "desde:", livro.retirada)
 	}
@@ -100,7 +131,7 @@ func criarBiblioteca() *Biblioteca {
 	lib.livros["O Guia do mochileiro das Galaxias Vol.1"] = RegistroLivro{quantidade: 3, alugados: 0}
 	lib.livros["Assim falava Zaratustra"] = RegistroLivro{quantidade: 1, alugados: 0}
 	lib.livros["A República"] = RegistroLivro{quantidade: 2, alugados: 0}
-	lib.livros["Ecce Homo"] = RegistroLivro{quantidade: 2, alugados: 0}
+	lib.livros["Ecce Homo"] = RegistroLivro{quantidade: 1, alugados: 0}
 
 	lib.membros["Alessandra"] = Membro{nome: "Alessandra", livros: make(map[Titulo]RegistroTempo)}
 	lib.membros["Danny"] = Membro{nome: "Danny", livros: make(map[Titulo]RegistroTempo)}
@@ -114,17 +145,16 @@ func main() {
 	lib := criarBiblioteca()
 	lib.infoBiblioteca()
 
-	alessandra := lib.membros["Alessandra Ribeiro"]
-	danny := lib.membros["Danny Bendochy"]
-	//heila := lib.membros["Sheila Wandergirlt"]
-	//bianca := lib.membros["Bianca Hills"]
+	alessandra := lib.membros["Alessandra"]
+	//danny := lib.membros["Danny"]
+	//sheila := lib.membros["Sheila"]
+	//bianca := lib.membros["Bianca"]
 
 	fmt.Println("INICIO")
-
 	lib.emprestarLivro("Ecce Homo", &alessandra)
-	lib.emprestarLivro("A República", &danny)
 
-	fmt.Println("FIM")
+	lib.devolverLivro("Ecce Homo", &alessandra)
+
 	lib.infoBiblioteca()
-	//lib.verificarEmprestimos(&alessandra)
+	fmt.Println("FIM")
 }
