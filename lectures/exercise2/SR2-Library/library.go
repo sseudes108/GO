@@ -24,75 +24,107 @@ import (
 	"time"
 )
 
+type Titulo string
 type Nome string
 
-type Time struct {
-	retirado  time.Time
-	devolvido time.Time
+type RegistroTempo struct {
+	retirada  time.Time
+	devolucao time.Time
 }
 
-type Livro struct {
-	nome        Nome
-	quantidade  int
-	alugados    int
-	retiradoEm  Time
-	devolvidoEm Time
+type RegistroLivro struct {
+	quantidade int
+	alugados   int
 }
-
 type Membro struct {
-	nome     Nome
-	alugados int
+	nome   Nome
+	livros map[Titulo]RegistroTempo
 }
-
-/*type Biblioteca struct {
-	livros  []*Livro
-	members []*Membro
-}*/
 
 type Biblioteca struct {
-	livros  map[Nome]*Livro
-	members []*Membro
+	livros  map[Titulo]RegistroLivro
+	membros map[Nome]Membro
+}
+
+func (lib *Biblioteca) emprestarLivro(titulo Titulo, membro *Membro) bool {
+
+	livro, encontrado := lib.livros[titulo]
+	if !encontrado {
+		fmt.Println("Livro não faz parte da biblioteca")
+		return false
+	}
+	if livro.alugados >= livro.quantidade {
+		fmt.Println("Não há mais desse livro disponivel")
+		return false
+	}
+	livro.alugados++
+	lib.livros[titulo] = livro
+
+	momentoRetirada := time.Now()
+	horaFormatada := momentoRetirada.Format("2006-01-02 15:04")
+	horaFormatadaComoTime, _ := time.Parse("2006-01-02 15:04", horaFormatada)
+	membro.livros[titulo] = RegistroTempo{retirada: horaFormatadaComoTime}
+
+	return true
+}
+
+func (lib *Biblioteca) infoBiblioteca() {
+	lib.infoLivros()
+	lib.infoMembros()
+}
+func (lib *Biblioteca) verificarEmprestimos(membro *Membro) {
+	fmt.Println("Emprestimos")
+	for titulo, livro := range membro.livros {
+		fmt.Println("Membro:", membro.nome, ",", titulo, ",", "desde:", livro.retirada)
+	}
+}
+
+func (lib *Biblioteca) infoLivros() {
+	for titulo, livro := range lib.livros {
+		fmt.Println(titulo, livro)
+	}
+}
+func (lib *Biblioteca) infoMembros() {
+	for _, membro := range lib.membros {
+		lib.verificarEmprestimos(&membro)
+	}
 }
 
 func criarBiblioteca() *Biblioteca {
 
 	lib := Biblioteca{
-		livros:=make(map[Nome]Livro)
+		livros:  make(map[Titulo]RegistroLivro),
+		membros: make(map[Nome]Membro),
 	}
-	return lib
-}
 
-func (lib *Biblioteca) emprestarLivro(livro *Livro, client *Membro) {
-	fmt.Println(lib.livros[livro].nome)
-}
+	lib.livros["O Guia do mochileiro das Galaxias Vol.1"] = RegistroLivro{quantidade: 3, alugados: 0}
+	lib.livros["Assim falava Zaratustra"] = RegistroLivro{quantidade: 1, alugados: 0}
+	lib.livros["A República"] = RegistroLivro{quantidade: 2, alugados: 0}
+	lib.livros["Ecce Homo"] = RegistroLivro{quantidade: 2, alugados: 0}
 
-func (lib *Biblioteca) infoLivros() {
-	fmt.Println()
-	fmt.Println("Livros")
-	for _, livro := range lib.livros {
-		fmt.Println(livro.nome, " - Quantidade em estante:", livro.quantidade,
-			" - Quantidade emprestada:", livro.alugados)
-	}
-}
+	lib.membros["Alessandra"] = Membro{nome: "Alessandra", livros: make(map[Titulo]RegistroTempo)}
+	lib.membros["Danny"] = Membro{nome: "Danny", livros: make(map[Titulo]RegistroTempo)}
+	lib.membros["Bianca"] = Membro{nome: "Bianca", livros: make(map[Titulo]RegistroTempo)}
+	lib.membros["Sheila"] = Membro{nome: "Sheila", livros: make(map[Titulo]RegistroTempo)}
 
-func (lib *Biblioteca) infoMembros() {
-	fmt.Println()
-	fmt.Println("Membros")
-	for _, membro := range lib.members {
-		fmt.Println(membro.nome, "- Alugados:", membro.alugados)
-	}
-}
-
-func (lib *Biblioteca) infoLib() {
-	lib.infoLivros()
-	lib.infoMembros()
+	return &lib
 }
 
 func main() {
 	lib := criarBiblioteca()
+	lib.infoBiblioteca()
 
-	//fmt.Println(lib)
+	alessandra := lib.membros["Alessandra Ribeiro"]
+	danny := lib.membros["Danny Bendochy"]
+	//heila := lib.membros["Sheila Wandergirlt"]
+	//bianca := lib.membros["Bianca Hills"]
 
-	lib.infoLivros()
-	lib.infoMembros()
+	fmt.Println("INICIO")
+
+	lib.emprestarLivro("Ecce Homo", &alessandra)
+	lib.emprestarLivro("A República", &danny)
+
+	fmt.Println("FIM")
+	lib.infoBiblioteca()
+	//lib.verificarEmprestimos(&alessandra)
 }
