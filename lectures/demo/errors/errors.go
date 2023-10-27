@@ -19,6 +19,8 @@ func (s *Stuff) Get(index int) (int, error) {
 func main() {
 
 	stuff := Stuff{}
+	stuff.values = []int{1, 2, 3, 4}
+
 	value, err := stuff.Get(10)
 	if err != nil {
 		fmt.Println(err)

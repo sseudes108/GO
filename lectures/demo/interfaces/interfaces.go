@@ -12,6 +12,7 @@ type Salad string
 func (chicken Chicken) PrepareDish() {
 	fmt.Println("cook chicken")
 }
+
 func (salad Salad) PrepareDish() {
 	fmt.Println("chop salad")
 	fmt.Println("add dressing")
