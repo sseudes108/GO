@@ -18,7 +18,38 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"unicode"
+)
+
+func checkLines(s []string) {
+	var letters, numbers, spaces, puntcs int
+
+	check := func(r rune) bool {
+		if unicode.IsLetter(r) {
+			letters++
+		} else if unicode.IsNumber(r) {
+			numbers++
+		} else if unicode.IsSpace(r) {
+			spaces++
+		} else if unicode.IsPunct(r) {
+			puntcs++
+		} else {
+			println("Error")
+		}
+		return false
+	}
+
+	for _, str := range s {
+		for _, r := range str {
+			check(r)
+		}
+	}
+
+	fmt.Printf("The lines are composed by: %v letters, %v numbers, %v empty spaces and has %v punctuations.",
+		letters, numbers, spaces, puntcs)
+}
 
 func main() {
 	lines := []string{
@@ -28,4 +59,5 @@ func main() {
 		"12 spaces,",
 		"and 4 punctuation marks in these lines of text!",
 	}
+	checkLines(lines)
 }
