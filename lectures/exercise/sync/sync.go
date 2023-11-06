@@ -19,7 +19,66 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"math/rand"
+	"os"
+	"sync"
+	"time"
+	"unicode"
 )
 
-func main() {}
+func wait() {
+	time.Sleep(time.Duration(rand.Intn(500)) * time.Millisecond)
+}
+
+func countLetters(results chan<- int, wg *sync.WaitGroup, input []string) {
+	wait()
+	wg.Add(1)
+	defer wg.Done()
+	totalLetters := 0
+	for _, str := range input {
+		for _, r := range str {
+			if unicode.IsLetter(r) {
+				totalLetters++
+			}
+		}
+	}
+	results <- totalLetters
+}
+
+func main() {
+	userInput := bufio.NewReader(os.Stdin)
+	var wg sync.WaitGroup
+	results := make(chan int)
+
+	input, err := userInput.ReadString('\n')
+	inpText := []string{input}
+	if err != nil {
+		fmt.Println("Erro", err)
+		return
+	}
+	for i := 0; i < len(inpText); i++ {
+		go countLetters(results, &wg, inpText)
+	}
+
+	/*go func() {
+		for {
+			input, err := userInput.ReadString('\n')
+			inpText := []string{input}
+			if err != nil {
+				fmt.Println("Erro", err)
+				return
+			}
+			go countLetters(results, &wg, inpText)
+		}
+	}()*/
+
+	fmt.Println("Wait to finish")
+	wg.Wait()
+
+	for {
+		result := <-results
+		fmt.Println(result)
+	}
+}

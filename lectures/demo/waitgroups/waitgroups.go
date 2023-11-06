@@ -20,13 +20,12 @@ func main() {
 				counter--
 				wg.Done()
 			}()
-			duration := time.Duration(rand.Intn(500) * int(time.Millisecond))
+			duration := time.Duration(rand.Intn(500)) * time.Millisecond
 			fmt.Println("Waiting for", duration)
 			time.Sleep(duration)
 		}()
 	}
-
-	fmt.Println("Waiting for goroutines to finish")
+	fmt.Println("Waiting all goroutines finishes")
 	wg.Wait()
 	fmt.Println("Done!")
 }
