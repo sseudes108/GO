@@ -21,65 +21,50 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
 	"strings"
 	"sync"
-	"time"
 	"unicode"
 )
 
 func input() []string {
-	userInput := bufio.NewReader(os.Stdin)
+	userInput := bufio.NewScanner(os.Stdin)
 
-	for {
-		input, err := userInput.ReadString('\n')
+	var inputLines []string
+	for userInput.Scan() {
+		input := userInput.Text()
 		words := strings.Split(input, " ")
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			return words
-		}
+		inputLines = append(inputLines, words...)
 	}
+	return inputLines
 }
 
-func wait() {
-	time.Sleep(time.Duration(rand.Intn(500)) * time.Millisecond)
-}
-
-func countLetters(results chan<- int, wg *sync.WaitGroup, input []string) {
-	numberOfLetters := 0
-	wait()
+func countLetters(result chan<- int, wg *sync.WaitGroup, word string) {
 	defer wg.Done()
+	sum := 0
 
-	for _, str := range input {
-		for _, r := range str {
-			if unicode.IsLetter(r) {
-				numberOfLetters++
-			}
+	for _, r := range word {
+		if unicode.IsLetter(r) {
+			sum++
 		}
 	}
 
-	results <- numberOfLetters
+	result <- sum
 }
 
 func main() {
 	input := input()
-	var wg sync.WaitGroup
 	results := make(chan int)
-	total := 0
+	var wg sync.WaitGroup
 
 	for i := 0; i < len(input); i++ {
 		wg.Add(1)
-		go countLetters(results, &wg, input)
-
-		fmt.Println("computing word:", i)
-		result := <-results
-		total = result
+		go countLetters(results, &wg, input[i])
 	}
-
-	fmt.Println("Waiting")
 	wg.Wait()
-	fmt.Printf("Total of %v letters and %v words\n", total, len(input)+1)
-	fmt.Println("Done!")
+	total := 0
+	for result := range results {
+		total += result
+	}
+	fmt.Println(total)
 }
