@@ -17,45 +17,42 @@
 
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
 
-//* Write a function that accepts a person's name as a function
-//  parameter and displays a greeting to that person.
-func greeting(name string) {
-	fmt.Println("Hi", name, "how are you?")
+func input() string {
+	userInput := bufio.NewReader(os.Stdin)
+	input, err := userInput.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error", err)
+	}
+	return input
 }
 
-//* Write a function that returns any message, and call it from within
-//  fmt.Println()
-func message() string {
-	return "I'ts a good day!"
+func greetings(name string) {
+	fmt.Printf("Hello, %v", name)
 }
 
-//* Write a function to add 3 numbers together, supplied as arguments, and
-//  return the answer
-func sum(a, b, c int) int {
-	sum := a + b + c
-	return sum
+func sum(n1 int, n2 int, n3 int) int {
+	return n1 + n2 + n3
 }
 
-//* Write a function that returns any number
-func anyNumber() int {
-	return 4
+func n1(n int) int {
+	return n * 2
 }
-
-//* Write a function that returns any two numbers
-func anyTwoNumbers() (int, int) {
-	return 2, 6
+func n2(n int) (int, int) {
+	return n * 3, n * 4
 }
 
 func main() {
-	greeting("Eudes")
-	fmt.Println(message())
-	fmt.Println("the sum is:", sum(1, 2, 3))
+	fmt.Println("Enter your name: ")
+	userName := input()
+	greetings(userName)
+	fmt.Println("The sum is", sum(1, 2, 3))
 
-	//* Add three numbers together using any combination of the existing functions.
-	//  - Print the result
-	n1 := (anyNumber())
-	n2, n3 := anyTwoNumbers()
-	fmt.Println("the sum is:", sum(n1, n2, n3))
+	n2, n3 := n2(2) //6, 8s
+	fmt.Println(n1(2) + n2 + n3)
 }
