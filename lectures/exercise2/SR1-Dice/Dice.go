@@ -23,53 +23,5 @@
 
 package main
 
-import (
-	"fmt"
-	"math/rand"
-)
-
-var numberOfDices, numberOfRolls, numberOfSides int
-
-func rollDices(dices, sides, rolls int) {
-	sum := 0
-	roll := 1
-	dice := 1
-	for i := 0; i < dices; i++ {
-		fmt.Println()
-		fmt.Println("dice:", dice)
-		roll = 1
-		for i := 0; i < rolls; i++ {
-			fmt.Println("roll:", roll)
-			number := rand.Intn(sides) + 1
-			fmt.Println("number taken:", number)
-			fmt.Println("sum at start:", sum)
-			sum += number
-			roll++
-			fmt.Println("sum at end:", sum)
-		}
-		dice++
-	}
-
-	if sum == 2 && dices == 2 {
-		fmt.Println("Snake eyes!")
-	}
-	if sum == 7 {
-		fmt.Println("Lucky 7!")
-	}
-	if sum%2 != 0 {
-		fmt.Println("Odd")
-	} else {
-		fmt.Println("Even")
-	}
-
-}
-
 func main() {
-	numberOfDices = 2
-	numberOfSides = 2
-	numberOfRolls = 2
-
-	for i := 0; i < 10; i++ {
-		rollDices(numberOfDices, numberOfSides, numberOfRolls)
-	}
 }

@@ -13,32 +13,28 @@ package main
 
 import "fmt"
 
-func classification(age int) string {
-	if age < 0 {
-		return "invalid age"
-	}
+func classification(age int) {
 	switch age {
 	case 0:
-		return "newborn"
+		fmt.Println("Age", age, "newborn")
 	case 1, 2, 3:
-		return "toddler"
+		fmt.Println("Age", age, "toddler")
 	case 4, 5, 6, 7, 8, 9, 10, 11, 12:
-		return "child"
+		fmt.Println("Age", age, "child")
 	case 13, 14, 15, 16, 17:
-		return "teenager"
+		fmt.Println("Age", age, "teenager")
 	default:
-		return "adult"
+		fmt.Println("Age", age, "adult")
 	}
 }
 
 func main() {
-	fmt.Println(classification(12)) //child
 
-	fmt.Println(classification(17)) //teenager
+	fmt.Print("Start\n")
 
-	fmt.Println(classification(2)) // toddler
+	for i := 0; i <= 20; i++ {
+		classification(i)
+	}
 
-	fmt.Println(classification(27)) // adult
-
-	fmt.Println(classification(0)) // newborn
+	fmt.Print("End\n")
 }

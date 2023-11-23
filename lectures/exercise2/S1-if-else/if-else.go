@@ -35,75 +35,56 @@ const (
 	guest
 )
 
-func isWeekDay(day int) bool {
-	if day > friday {
-		return false
-	} else {
+func accessGranted() {
+	fmt.Println("Acess Granted")
+}
+
+func accessDenied() {
+	fmt.Println("Acess Denied")
+}
+
+func isWeekday(weekday int) bool {
+	if weekday <= 4 {
 		return true
+	} else {
+		return false
 	}
 }
 
-func returnMessage(key int, weekday int) {
-	if key == 0 {
-		fmt.Println("Acess Denied", weekday)
-	}
-	if key == 1 {
-		fmt.Println("Acess Granted", weekday)
-	}
-}
+func checkAcess(role int, day int) {
+	weekday := isWeekday(day)
 
-func checkAcess(user int, day int) {
-	if user == admin || user == manager {
-		returnMessage(1, day)
-	}
-
-	if user == contractor {
-		if isWeekDay(day) {
-			returnMessage(0, day)
-		} else {
-			returnMessage(1, day)
-		}
-	}
-
-	if user == member {
-		if isWeekDay(day) {
-			returnMessage(1, day)
-		} else {
-			returnMessage(0, day)
-		}
-	}
-
-	if user == guest {
+	if role == admin || role == manager {
+		accessGranted()
+	} else if role == contractor && !weekday {
+		accessGranted()
+	} else if role == member && weekday {
+		accessGranted()
+	} else if role == guest {
 		if day == monday || day == wednesday || day == friday {
-			returnMessage(1, day)
-		} else {
-			returnMessage(0, day)
+			accessGranted()
 		}
+	} else {
+		accessDenied()
 	}
 }
 
 func main() {
-	fmt.Println("Start")
 
+	// --Requirements:
+	//   - Use the accessGranted() and accessDenied() functions to display
+	//     informational messages
 	//   - Access at any time: Admin, Manager
-	fmt.Printf("Admin: ")
-	checkAcess(admin, friday) //granted 4
-
-	//   - Access weekdays: Member
-	fmt.Printf("Manager: ")
-	checkAcess(manager, monday) //granted 0
-
 	//   - Access weekends: Contractor
-	fmt.Printf("Contractor: ")
-	checkAcess(contractor, monday) //denied 2
-
 	//   - Access weekdays: Member
-	fmt.Printf("Member: ")
-	checkAcess(member, wednesday) //granted 2
-
 	//   - Access Mondays, Wednesdays, and Fridays: Guest
-	fmt.Printf("Guest: ")
-	checkAcess(guest, thursday) // denied 3
+	fmt.Print("Start\n")
 
-	fmt.Println("End")
+	checkAcess(admin, sunday)         //granted
+	checkAcess(manager, friday)       //granted
+	checkAcess(contractor, wednesday) //denied
+	checkAcess(member, saturday)      //denied
+	checkAcess(guest, wednesday)      //granted
+
+	fmt.Print("End\n")
 }
