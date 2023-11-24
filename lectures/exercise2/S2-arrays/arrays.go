@@ -16,56 +16,75 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-type Product struct {
+// - Products must include the price and the name
+type product struct {
 	name  string
 	price int
 }
 
-func sum(shoplist []Product) int {
-	sum := 0
-	for _, item := range shoplist {
-		sum += item.price
-	}
-	return sum
+func lastProductOnlist(shoplist []*product) {
+	lastItem := len(shoplist) - 1
+	fmt.Println("The last product on list is:", shoplist[lastItem].name)
 }
-func printInfo(shoplist []Product) {
-	fmt.Println("The last item is:", shoplist[len(shoplist)-1].name,
-		"price:", shoplist[len(shoplist)-1].price)
-
-	fmt.Println("The total of items is:", len(shoplist))
-
-	fmt.Println("The total cost of the list is:", sum(shoplist))
+func totalItensOnList(shoplist []*product) {
+	fmt.Println("There are", len(shoplist), "itens on the list")
+}
+func totalCostOnList(shoplist []*product) {
+	sum := 0
+	for i := 0; i < len(shoplist); i++ {
+		price := shoplist[i].price
+		sum += price
+	}
+	fmt.Println("Cost of all itens on the list is:", sum)
+}
+func printListInfo(shoplist []*product) {
+	lastProductOnlist(shoplist)
+	totalItensOnList(shoplist)
+	totalCostOnList(shoplist)
 }
 
 func main() {
-	shoplist := []Product{}
+	fmt.Println("Start")
+	fmt.Println("")
 
-	pc := Product{
-		name:  "Pc",
-		price: 1000,
-	}
-	monitor := Product{
-		name:  "Monitor",
-		price: 1000,
-	}
-	desk := Product{
-		name:  "Desk",
-		price: 1000,
-	}
-	shoplist = append(shoplist, pc, monitor, desk)
+	//* Using an array, create a shopping list with enough room
+	//  for 4 products
+	shoplist := []*product{}
 
-	printInfo(shoplist)
+	cpu := product{
+		name:  "I5-10400f",
+		price: 3184,
+	}
+	ram := product{
+		name:  "Korsair 16gb 1666",
+		price: 720,
+	}
+	monitor := product{
+		name:  "LG 29' Ultrawilde",
+		price: 1104,
+	}
+
+	shoplist = append(shoplist, &cpu, &ram, &monitor)
+
+	//  - The last item on the list
+	//  - The total number of items
+	//  - The total cost of the items
+	printListInfo(shoplist)
 
 	//* Add a fourth product to the list and print out the
+	mouse := product{"AlienWare Mouse R5400", 420}
+	shoplist = append(shoplist, &mouse)
+	fmt.Println("")
+	fmt.Println("Adding another item")
+	fmt.Println("")
+
 	//  information again
-	mouse := Product{
-		name:  "Mouse",
-		price: 100,
-	}
+	printListInfo(shoplist)
 
-	shoplist = append(shoplist, mouse)
-
-	printInfo(shoplist)
+	fmt.Println("")
+	fmt.Println("End")
 }
