@@ -22,67 +22,87 @@ package main
 
 import "fmt"
 
-type Server string
-
 const (
-	online = iota
-	offline
-	maintenance
-	retired
+	Online = iota
+	Offline
+	Maintenance
+	Retired
 )
 
-func showServersStatus(servers map[Server]int) {
-	fmt.Println("Number os servers:", len(servers))
-	stats := ""
-	onlines, offlines, uMaintence, retireds := 0, 0, 0, 0
-	for server, status := range servers {
-		switch status {
-		case online:
-			stats = "Online"
-			onlines++
-		case offline:
-			stats = "Offline"
-			offlines++
-		case maintenance:
-			stats = "Maintence"
-			uMaintence++
-		case retired:
-			stats = "Retired"
-			retireds++
-		}
-		fmt.Println("Server:", server, "-", stats)
-	}
-	fmt.Println("----")
-	fmt.Println("Servers Online", onlines)
-	fmt.Println("Servers Offline", offlines)
-	fmt.Println("Servers Under Maintence", uMaintence)
-	fmt.Println("Servers Retired", retireds)
-	fmt.Println("----")
+type Server string
+
+func changeServerStatus(servMap map[Server]int, server Server, status int) {
+	fmt.Println("Changing server", server, "status")
+	servMap[server] = status
 }
 
-func setMaintence(servers map[Server]int) {
-	for server := range servers {
-		servers[server] = maintenance
+func maintenceAllServers(servMap map[Server]int) {
+	fmt.Println("Setting Maintence")
+	for server := range servMap {
+		servMap[server] = Maintenance
 	}
+}
+
+func OverallServerStatus(servMap map[Server]int) {
+
+	fmt.Println("Total servers: ", len(servMap))
+
+	online, offline, maintenance, retired := 0, 0, 0, 0
+
+	for server, status := range servMap {
+		switch status {
+		case Online:
+			online++
+		case Offline:
+			offline++
+		case Maintenance:
+			maintenance++
+		case Retired:
+			retired++
+		}
+		fmt.Println("Server: ", server, "- Status: ", statusToText(status))
+	}
+}
+
+func statusToText(number int) string {
+	if number == Online {
+		return "Online"
+	} else if number == Offline {
+		return "Offline"
+	} else if number == Maintenance {
+		return "Maintenance"
+	} else if number == Retired {
+		return "Retired"
+	}
+	return "Error"
 }
 
 func main() {
-	servers := []Server{"darkstar", "aiur", "omicron", "w359", "baseline"}
+	fmt.Println("Start")
 
-	mapsServer := make(map[Server]int)
+	servers := []Server{"darkstar", "aiur", "omicron", "w359", "baseline"}
+	mapServers := make(map[Server]int)
 
 	for _, server := range servers {
-		mapsServer[server] = online
+		mapServers[server] = Online
 	}
 
-	showServersStatus(mapsServer)
+	//  - call display server info function
+	OverallServerStatus(mapServers)
 
-	mapsServer["darkstar"] = retired
-	mapsServer["aiur"] = offline
+	//  - change server status of `darkstar` to `Retired`
+	changeServerStatus(mapServers, "darkstar", Retired)
+	//  - change server status of `aiur` to `Offline`
+	changeServerStatus(mapServers, "aiur", Offline)
 
-	showServersStatus(mapsServer)
+	//  - call display server info function
+	OverallServerStatus(mapServers)
 
-	setMaintence(mapsServer)
+	//  - change server status of all servers to `Maintenance`
+	maintenceAllServers(mapServers)
 
-	showServersStatus(mapsServer)
+	//  - call display server info function
+	OverallServerStatus(mapServers)
+
+	fmt.Println("End")
 }

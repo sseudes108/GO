@@ -19,15 +19,19 @@ import "fmt"
 type Part string
 
 func main() {
-	assembly := []Part{"Pipe", "Wheel", "Bolt"}
+	fmt.Println("Start")
 
-	fmt.Println("before:", assembly)
+	//  - Create an assembly line having any three parts
+	assembly := []Part{"Item1", "Item2", "Item3"}
+	fmt.Println(assembly)
 
-	assembly = append(assembly, "Nail", "Oil")
+	//  - Add two new parts to the line
+	assembly = append(assembly, "Item4", "Item5")
+	fmt.Println(assembly)
 
-	fmt.Println("Adding Nail e Oil", assembly)
+	//  - Slice the assembly line so it contains only the two new parts
+	slice := assembly[3:]
+	fmt.Println(slice)
 
-	assembly = assembly[2:]
-
-	fmt.Println("Sliced:", assembly)
+	fmt.Println("End")
 }
