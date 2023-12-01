@@ -16,6 +16,50 @@
 
 package main
 
+import "fmt"
+
+type Item struct {
+	name         string
+	secTagActive bool
+}
+
+func changeSecTag(item *Item, status bool) {
+	item.secTagActive = status
+}
+
+func checkout(itens []*Item) {
+	for _, item := range itens {
+		changeSecTag(item, false)
+	}
+}
+
+func printInfo(itens []*Item) {
+	for _, item := range itens {
+		status := ""
+		if item.secTagActive {
+			status = "Actived"
+		} else {
+			status = "Deactived"
+		}
+		fmt.Print("Name: ", item.name, " - Tag Status: ", status, "\n")
+	}
+}
+
 func main() {
 
+	fmt.Println("Start")
+
+	camisa := Item{"Camisa", true}
+	tenis := Item{"Tênis", true}
+	cueca := Item{"Cueca", true}
+	sapato := Item{"Sapato", true}
+
+	itens := []*Item{&camisa, &tenis, &cueca, &sapato}
+	printInfo(itens)
+
+	fmt.Println("Checkout")
+	checkout(itens)
+	printInfo(itens)
+
+	fmt.Println("Start")
 }

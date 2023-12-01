@@ -17,62 +17,64 @@ package main
 import "fmt"
 
 type Character struct {
-	name      string
-	maxHealth int
-	health    int
-	maxMana   int
-	mana      int
+	Name      string
+	Health    int
+	MaxHealth int
+	Energy    int
+	MaxEnergy int
 }
 
-func CreateChar() Character {
+func (char *Character) showCharInfo() {
+	fmt.Print("Name: ", char.Name, "\nHealth: ", char.Health, "/", char.MaxHealth, " Energy: ", char.Energy, "/", char.MaxEnergy, "\n")
+}
 
-	char := Character{
-		name:      "",
-		maxHealth: 100,
-		health:    100,
-		maxMana:   500,
-		mana:      500,
-	}
+func (char *Character) takeDamage(value int) {
+	fmt.Println("Take damage", value)
+	char.Health -= value
+}
+
+func (char *Character) healDamage(value int) {
+	fmt.Println("Heal damage", value)
+	char.Health += value
+}
+
+func (char *Character) spendEnergy(value int) {
+	fmt.Println("Spend Energy", value)
+	char.Energy -= value
+}
+
+func (char *Character) restoreEnergy(value int) {
+	fmt.Println("Spend Energy", value)
+	char.Energy += value
+}
+
+func createChar(name string, maxHealth int, maxEnergy int) Character {
+	char := Character{}
+	char.Name = name
+	char.MaxHealth = maxHealth
+	char.MaxEnergy = maxEnergy
+	char.Health = maxHealth
+	char.Energy = maxEnergy
+
 	return char
 }
 
-func (char *Character) damageChar(amount int) {
-	char.health -= amount
-	fmt.Println("Taking", amount, "damage")
-}
-func (char *Character) healChar(amount int) {
-	char.health += amount
-	fmt.Println("Healing", amount, "damage")
-}
-func (char *Character) spendMana(amount int) {
-	char.mana -= amount
-	fmt.Println("Spending", amount, "mana")
-}
-func (char *Character) restoreMana(amount int) {
-	char.mana += amount
-	fmt.Println("Restoring", amount, "mana")
-}
-
-func (char *Character) printInfoChar() {
-	fmt.Println(char.name)
-	fmt.Println("Current healt:", char.health)
-	fmt.Println("Current Mana:", char.mana)
-}
-
 func main() {
-	player := CreateChar()
-	player.name = "Dimir"
-
 	fmt.Println("Start")
-	player.printInfoChar()
 
-	player.damageChar(10)
-	player.spendMana(60)
-	player.printInfoChar()
+	eudes := createChar("Eudes", 108, 216)
 
-	player.healChar(10)
-	player.restoreMana(60)
-	player.printInfoChar()
+	eudes.showCharInfo()
+
+	eudes.takeDamage(54)
+	eudes.showCharInfo()
+	eudes.healDamage(27)
+	eudes.showCharInfo()
+
+	eudes.spendEnergy(216)
+	eudes.showCharInfo()
+	eudes.restoreEnergy(108)
+	eudes.showCharInfo()
 
 	fmt.Println("End")
 }
