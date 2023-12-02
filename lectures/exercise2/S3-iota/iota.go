@@ -25,26 +25,21 @@ const (
 	div
 )
 
-func (operation Operation) calculate(n1, n2 int) int {
+func (operation Operation) calculate(operand1, operand2 int) int {
 	result := 0
-	switch operation {
-	case add:
-		result = n1 + n2
-	case sub:
-		result = n1 - n2
-	case mul:
-		result = n1 * n2
-	case div:
-		result = n1 / n2
-	default:
-		panic("invalid operation")
+	if operation == add {
+		result = operand1 + operand2
+	} else if operation == sub {
+		result = operand1 - operand2
+	} else if operation == mul {
+		result = operand1 * operand2
+	} else if operation == div {
+		result = operand1 / operand2
 	}
 	return result
 }
 
 func main() {
-
-	//add,sub,mul and div created as consts
 
 	fmt.Println(add.calculate(2, 2)) // = 4
 
