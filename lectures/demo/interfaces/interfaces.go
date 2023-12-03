@@ -2,33 +2,104 @@ package main
 
 import "fmt"
 
+/*type Reseter interface {
+	reset()
+}
+
+type InfoPrinter interface {
+	printInfo()
+}
+
+type Player struct {
+	name      string
+	health    int
+	positionX int
+	positionY int
+}
+
+type Enemy struct {
+	name   string
+	health int
+	mana   int
+}
+
+func (e *Enemy) reset() {
+	e.health = 1080
+	e.mana = 324
+}
+
+func (e *Enemy) printInfo() {
+	fmt.Println("Enemy")
+	fmt.Println(e.name)
+	fmt.Println("Health:", e.health)
+	fmt.Println("Mana:", e.mana)
+}
+
+func (p *Player) reset() {
+	p.health = 100
+	p.positionX = 0
+	p.positionY = 0
+}
+
+func (p *Player) printInfo() {
+	fmt.Println(p.name)
+	fmt.Println("Health:", p.health)
+	fmt.Println("Position X:", p.positionX, "Position Y:", p.positionY)
+}
+
+func reset(r Reseter) {
+	r.reset()
+}
+func printInfo(i InfoPrinter) {
+	i.printInfo()
+}
+
+func resetWithPenalty(r Reseter) {
+	if player, ok := r.(*Player); ok {
+		player.health = 50
+	} else {
+		r.reset()
+	}
+}
+
+func main() {
+	player := Player{"Sheila", 50, 5, 5}
+	printInfo(&player) // 50,5,5
+	resetWithPenalty(&player)
+	printInfo(&player) // 100,0,0
+
+	enemy := Enemy{"Danny", 540, 216}
+	printInfo(&enemy) // 540,216
+	resetWithPenalty(&enemy)
+	printInfo(&enemy) // 1080,324
+}*/
+
 type Preparer interface {
-	PrepareDish()
+	prepareDish()
 }
 
 type Chicken string
 type Salad string
 
-func (chicken Chicken) PrepareDish() {
-	fmt.Println("cook chicken")
+func (c Chicken) prepareDish() {
+	fmt.Println("Cook Chicken")
 }
 
-func (salad Salad) PrepareDish() {
-	fmt.Println("chop salad")
-	fmt.Println("add dressing")
+func (s Salad) prepareDish() {
+	fmt.Println("Chop Salad")
+	fmt.Println("Add Dressing")
 }
 
-func prepareDishes(dishes []Preparer) {
-	fmt.Println("Prepare dishes:")
+func prepareMultipleDishes(dishes []Preparer) {
+	fmt.Println("Preparing dishes:")
 	for i := 0; i < len(dishes); i++ {
 		dish := dishes[i]
-		fmt.Printf(("--Dish: %v--\n"), dish)
-		dish.PrepareDish()
+		fmt.Printf("--Dish: %v--", dish)
+		dish.prepareDish()
 	}
-	fmt.Println()
 }
 
 func main() {
-	dishes := []Preparer{Chicken("chicken wings"), Salad("iceberg salad")}
-	prepareDishes(dishes)
+	dishes := []Preparer{Chicken("Chiken Wings"), Salad("Iceberg Salad"), Salad("Ceasar's Salad")}
+	prepareMultipleDishes(dishes)
 }
