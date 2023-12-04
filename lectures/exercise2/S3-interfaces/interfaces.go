@@ -21,49 +21,50 @@ package main
 
 import "fmt"
 
-type Lifter interface {
+type Lifterer interface {
 	lift()
 }
 
-type Size int
-
-const (
-	Motorcycle Size = iota
-	Car
-	Truck
-	test
-)
+type Type int
 
 type Vehicle struct {
-	name string
-	size Size
+	model string
+	size  Type
 }
+
+const (
+	motorcycle Type = iota
+	car
+	truck
+)
 
 func (v *Vehicle) lift() {
 	vehicle := v
-	if vehicle.size == Motorcycle {
-		fmt.Println(v.name, " - Small lift")
-	} else if vehicle.size == Car {
-		fmt.Println(v.name, " - Standard lift")
-	} else if vehicle.size == Truck {
-		fmt.Println(v.name, " - Large lift")
-	} else {
-		fmt.Println("Error! Unknown size")
+
+	switch vehicle.size {
+	case motorcycle:
+		fmt.Println(vehicle.model, "- Motorcycle. Small lift")
+	case car:
+		fmt.Println(vehicle.model, "- Car. Standard lift")
+	case truck:
+		fmt.Println(vehicle.model, "- Truck. Large lift")
+	default:
+		fmt.Println(vehicle.model, "- Error! Unkown model/size")
 	}
 }
 
-var _ Lifter = (*Vehicle)(nil)
-
 func main() {
+	vehicleList := []Lifterer{}
+	cg := Vehicle{"CG-250", motorcycle}
+	twister := Vehicle{"Twister", motorcycle}
+	hb20 := Vehicle{"HB-20", car}
+	cayenne := Vehicle{"Cayenne", car}
+	road := Vehicle{"Road Devourer", truck}
+	tucson := Vehicle{"Tucson", truck}
 
-	ninja := Vehicle{"Ninja", Motorcycle}
-	tucson := Vehicle{"Tucson", Truck}
-	stilo := Vehicle{"Stilo", Car}
-	test := Vehicle{"Test", test}
+	vehicleList = append(vehicleList, &cg, &twister, &hb20, &cayenne, &road, &tucson)
 
-	vehiclesToPark := []Lifter{&ninja, &tucson, &stilo, &test}
-
-	for _, vehicle := range vehiclesToPark {
+	for _, vehicle := range vehicleList {
 		vehicle.lift()
 	}
 }
