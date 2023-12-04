@@ -19,6 +19,51 @@
 
 package main
 
+import "fmt"
+
+type Lifter interface {
+	lift()
+}
+
+type Size int
+
+const (
+	Motorcycle Size = iota
+	Car
+	Truck
+	test
+)
+
+type Vehicle struct {
+	name string
+	size Size
+}
+
+func (v *Vehicle) lift() {
+	vehicle := v
+	if vehicle.size == Motorcycle {
+		fmt.Println(v.name, " - Small lift")
+	} else if vehicle.size == Car {
+		fmt.Println(v.name, " - Standard lift")
+	} else if vehicle.size == Truck {
+		fmt.Println(v.name, " - Large lift")
+	} else {
+		fmt.Println("Error! Unknown size")
+	}
+}
+
+var _ Lifter = (*Vehicle)(nil)
+
 func main() {
 
+	ninja := Vehicle{"Ninja", Motorcycle}
+	tucson := Vehicle{"Tucson", Truck}
+	stilo := Vehicle{"Stilo", Car}
+	test := Vehicle{"Test", test}
+
+	vehiclesToPark := []Lifter{&ninja, &tucson, &stilo, &test}
+
+	for _, vehicle := range vehiclesToPark {
+		vehicle.lift()
+	}
 }

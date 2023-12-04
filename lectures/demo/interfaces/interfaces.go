@@ -82,19 +82,18 @@ type Chicken string
 type Salad string
 
 func (c Chicken) prepareDish() {
-	fmt.Println("Cook Chicken")
+	fmt.Println("Cook chicken")
 }
 
 func (s Salad) prepareDish() {
-	fmt.Println("Chop Salad")
-	fmt.Println("Add Dressing")
+	fmt.Println("Chop salad. Add dressing")
 }
 
 func prepareMultipleDishes(dishes []Preparer) {
 	fmt.Println("Preparing dishes:")
 	for i := 0; i < len(dishes); i++ {
 		dish := dishes[i]
-		fmt.Printf("--Dish: %v--", dish)
+		fmt.Println("--Dish:", dish, "--")
 		dish.prepareDish()
 	}
 }
