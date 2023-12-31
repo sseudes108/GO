@@ -41,6 +41,15 @@ func ParseTime(input string) (Time, error) {
 	components := strings.Split(input, ":")
 
 	if len(components) != 3 {
+		return Time{}, &TimeParseError{"Incorrect number of elements", input}
+	} else {
+		hour, err := strconv.Atoi(components[0])
+		if err != nil {
+			return Time{}, &TimeParseError{"Error parsing hours: %v", err}
+		}
+	}
+
+	if len(components) != 3 {
 		return Time{}, &TimeParseError{"Invalid number of time components", input}
 	} else { //ATOI CONVERTE CADA PARTE DA STRING SEPARADA ANTERIORMENTE PARA O VALOR EM INT
 		hour, err := strconv.Atoi(components[0])

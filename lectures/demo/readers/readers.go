@@ -15,10 +15,12 @@ func main() {
 
 	for {
 		input, inputErr := r.ReadString(' ')
+
 		n := strings.TrimSpace(input)
 		if n == "" {
 			continue
 		}
+
 		num, convError := strconv.Atoi(n)
 		if convError != nil {
 			fmt.Println(convError)
@@ -29,9 +31,10 @@ func main() {
 		if inputErr == io.EOF {
 			break
 		}
+
 		if inputErr != nil {
-			fmt.Println("Error reading Stdin:", inputErr)
+			fmt.Println("Error reading Stdin: ", inputErr)
 		}
 	}
-	fmt.Printf("sum: %v\n", sum)
+	fmt.Println(sum)
 }
