@@ -68,4 +68,7 @@ func main() {
 
 	sm := SpamMail{40000}
 	automate(&sm)
+
+	// waste := ToxicWaste{300}
+	// automate(&waste)
 }

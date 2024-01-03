@@ -25,50 +25,40 @@ import (
 	"strings"
 )
 
-func ExitProgram(comandsEntered int, nonBlankLinesEntered int) {
-	//   - Upon program exit, some usage statistics should be printed
-	//     ('Q' and 'q' do not count towards these statistics):
-	//   - The number of non-blank lines entered
-	//   - The number of commands entered
-	fmt.Println("Comands Entered:", comandsEntered)
-	fmt.Println("Non blank lines entered:", nonBlankLinesEntered)
+func ExitProgram(commandsEntered, nonBlankLinesEntered, blankLinesEntered int) {
+	fmt.Println("Commands Entered: ", commandsEntered)
+	fmt.Println("Non Blank Lines Entered: ", nonBlankLinesEntered)
+	fmt.Println("Blank Lines Entered: ", blankLinesEntered)
 	os.Exit(0)
 }
 
 func main() {
-	comandsEntered := 0
+	userInputText := bufio.NewReader(os.Stdin)
+	commandsEntered := 0
 	nonBlankLinesEntered := 0
+	blankLinesEntered := 0
 
 	for {
-		inputText := bufio.NewReader(os.Stdin)
-
-		input, inputErr := inputText.ReadString('\n')
-		//   - When the user enters either "hello" or "bye", the program
-		//     should respond with a message after pressing the enter key.
-
-		inpText := strings.TrimSpace(input)
+		input, inputErr := userInputText.ReadString('\n')
 		if inputErr != nil {
 			fmt.Println(inputErr)
-			break
 		}
 
-		if inpText != "" {
-			if inpText == "hello" || inpText == "Hello" || inpText == "Hi" || inpText == "hi" {
-				fmt.Println("Command response: Hello Dave")
-				comandsEntered++
-				nonBlankLinesEntered++
-			} else if inpText == "Q" || inpText == "q" {
-				//   - Whenever the user types a "Q" or "q", the program should exit.
-				fmt.Println("Command response: Exiting. Good bye, Dave")
-				comandsEntered++
-				ExitProgram(comandsEntered, nonBlankLinesEntered)
-			} else {
-				fmt.Print("Command response: I did not understand that")
-				fmt.Println()
-				nonBlankLinesEntered++
-			}
+		inpText := strings.TrimSpace(input)
+		if inpText == "Hello" || inpText == "hello" || inpText == "Hi" || inpText == "hi" || inpText == "HI" {
+			commandsEntered++
+			nonBlankLinesEntered++
+			fmt.Println("Hello Dave")
+		} else if inpText == "Q" || inpText == "q" {
+			commandsEntered++
+			nonBlankLinesEntered++
+			ExitProgram(commandsEntered, nonBlankLinesEntered, blankLinesEntered)
+		} else if inpText == "" {
+			blankLinesEntered++
+			fmt.Println("No input, Dave")
 		} else {
-			fmt.Println("Command response: No inputs found, Dave")
+			nonBlankLinesEntered++
+			fmt.Println("I did not understand that, Dave")
 		}
 	}
 }

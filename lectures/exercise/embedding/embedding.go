@@ -65,7 +65,6 @@ func (m *MemoryUsage) AvarageMemoryUsage() int {
 func dashBoardUsageStats(board *Dashboard) {
 	board.BandwidthUsage.AvarageBandwithUsage()
 	board.CpuTemp.AvarageCpuTemp()
-
 	board.MemoryUsage.AvarageMemoryUsage()
 }
 
@@ -77,9 +76,9 @@ func main() {
 		MemoryUsage{[]Bytes{800000, 800000, 810000, 820000, 800000}},
 	}
 
-	board.AvarageBandwithUsage()
-	board.AvarageCpuTemp()
-	board.AvarageMemoryUsage()
+	// board.AvarageBandwithUsage()
+	// board.AvarageCpuTemp()
+	// board.AvarageMemoryUsage()
 	fmt.Println("--------------------------")
 	dashBoardUsageStats(&board)
 }
