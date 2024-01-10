@@ -8,7 +8,7 @@ import (
 )
 
 type SwatchRenderer struct {
-	square  canvas.Rectangle
+	square  *canvas.Rectangle
 	objects []fyne.CanvasObject
 	parent  *Swatch
 }
@@ -25,13 +25,13 @@ func (renderer *SwatchRenderer) Refresh() {
 	renderer.Layout(fyne.NewSize(20, 20))
 	renderer.square.FillColor = renderer.parent.Color
 	if renderer.parent.Selected {
-		renderer.square.StrokeWidth = 3
+		renderer.square.StrokeWidth = 2
 		renderer.square.StrokeColor = color.RGBA{255, 255, 255, 255}
-		renderer.objects[0] = &renderer.square
 	} else {
-		renderer.square.StrokeWidth = 0
-		renderer.objects[0] = &renderer.square
+		renderer.square.StrokeWidth = 0.5
+		renderer.square.StrokeColor = color.RGBA{0, 0, 0, 0}
 	}
+	renderer.objects[0] = renderer.square
 	canvas.Refresh(renderer.parent)
 }
 

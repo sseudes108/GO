@@ -36,7 +36,7 @@ func (swatch *Swatch) CreateRenderer() fyne.WidgetRenderer {
 	square := canvas.NewRectangle(swatch.Color)
 	objects := []fyne.CanvasObject{square}
 	return &SwatchRenderer{
-		square:  *square,
+		square:  square,
 		objects: objects,
 		parent:  swatch,
 	}
