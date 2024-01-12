@@ -6,6 +6,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
 	"zerotomastery.io/pixel/apptype"
 )
@@ -40,6 +41,16 @@ func CheckMousePositionInBounds(mousePosition fyne.Position, bounds image.Rectan
 	return false
 }
 
+func NewPxCanvas(state *apptype.State, config apptype.PxCanvasConfig) *PxCanvas {
+	pxCanvas := &PxCanvas{
+		PxCanvasConfig: config,
+		appState:       state,
+	}
+	pxCanvas.PixelData = NewBlankImage(pxCanvas.PxCols, pxCanvas.PxRows, color.NRGBA{128, 128, 128, 128})
+	pxCanvas.ExtendBaseWidget(pxCanvas)
+	return pxCanvas
+}
+
 func NewBlankImage(cols, rows int, color color.Color) image.Image {
 	newImage := image.NewNRGBA(image.Rect(0, 0, cols, rows))
 	for y := 0; y < rows; y++ {
@@ -50,16 +61,6 @@ func NewBlankImage(cols, rows int, color color.Color) image.Image {
 	return newImage
 }
 
-func newPxCanvas(state *apptype.State, config apptype.PxCanvasConfig) *PxCanvas {
-	pxCanvas := &PxCanvas{
-		PxCanvasConfig: config,
-		appState:       state,
-	}
-	pxCanvas.PixelData = NewBlankImage(pxCanvas.PxCols, pxCanvas.PxRows, color.NRGBA64{128, 128, 128, 128})
-	pxCanvas.ExtendBaseWidget(pxCanvas)
-	return pxCanvas
-}
-
 func (pxCanvas *PxCanvas) CreateRenderer() fyne.WidgetRenderer {
 	canvasImage := canvas.NewImageFromImage(pxCanvas.PixelData)
 	canvasImage.ScaleMode = canvas.ImageScalePixels
@@ -67,8 +68,8 @@ func (pxCanvas *PxCanvas) CreateRenderer() fyne.WidgetRenderer {
 
 	canvasBorder := make([]canvas.Line, 4)
 	for i := 0; i < len(canvasBorder); i++ {
-		canvasBorder[i].StrokeColor = color.NRGBA64{100, 100, 100, 255}
 		canvasBorder[i].StrokeWidth = 2
+		canvasBorder[i].StrokeColor = color.NRGBA{255, 255, 255, 255}
 	}
 
 	renderer := &PxCanvasRenderer{
@@ -79,4 +80,58 @@ func (pxCanvas *PxCanvas) CreateRenderer() fyne.WidgetRenderer {
 
 	pxCanvas.renderer = renderer
 	return renderer
+}
+
+func (pxCanvas *PxCanvas) TryPan(previousCoord *fyne.PointEvent, event *desktop.MouseEvent) {
+	if previousCoord != nil && event.Button == desktop.MouseButtonTertiary {
+		pxCanvas.Pan(*previousCoord, event.PointEvent)
+	}
+}
+
+// Brushable interface
+func (pxCanvas *PxCanvas) SetColor(newColor color.Color, x, y int) {
+
+	if nrgba, ok := pxCanvas.PixelData.(*image.NRGBA); ok {
+		nrgba.Set(x, y, newColor)
+	}
+
+	if rgba, ok := pxCanvas.PixelData.(*image.RGBA); ok {
+		rgba.Set(x, y, newColor)
+	}
+
+	pxCanvas.Refresh()
+}
+
+func (pxCanvas *PxCanvas) MouseToCanvasXY(event *desktop.MouseEvent) (*int, *int) {
+	bounds := pxCanvas.Bounds()
+	if !CheckMousePositionInBounds(event.Position, bounds) {
+		return nil, nil
+	}
+	pxSize := float32(pxCanvas.PxSize)
+	xOffeset := pxCanvas.CanvasOffset.X
+	yOffeset := pxCanvas.CanvasOffset.Y
+
+	x := int((event.Position.X - xOffeset) / pxSize)
+	y := int((event.Position.Y - yOffeset) / pxSize)
+
+	return &x, &y
+}
+
+func (pxCanvas *PxCanvas) LoadImage(img image.Image) {
+	dimensions := img.Bounds()
+
+	pxCanvas.PxCanvasConfig.PxCols = dimensions.Dx()
+	pxCanvas.PxCanvasConfig.PxRows = dimensions.Dy()
+
+	pxCanvas.PixelData = img
+	pxCanvas.reloadImage = true
+	pxCanvas.Refresh()
+}
+
+func (pxCanvas *PxCanvas) NewDrawing(cols, rows int) {
+	pxCanvas.appState.SetFilePath("")
+	pxCanvas.PxCols = cols
+	pxCanvas.PxRows = rows
+	pixelData := NewBlankImage(cols, rows, color.NRGBA{128, 128, 128, 255})
+	pxCanvas.LoadImage(pixelData)
 }
